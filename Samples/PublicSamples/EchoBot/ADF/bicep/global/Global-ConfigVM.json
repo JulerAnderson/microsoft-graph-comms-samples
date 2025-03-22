@@ -154,7 +154,7 @@
     "API-D": "Standard_D4s_v3",
     "API-S": "Standard_D2s_v3",
     "BOT-P": "Standard_D4s_v3",
-    "BOT-D": "Standard_D4s_v3",
+    "BOT-D": "Standard_D4s_v5",
     "BOT-S": "Standard_D2s_v3",
     "SF-P": "Standard_D4s_v3",
     "SF-D": "Standard_D4s_v3",
@@ -260,7 +260,6 @@
         "sku": "Enterprise",
         "version": "latest"
       },
-      // "licenseType": "Windows_Server",
       "OS": "Windows",
       "OSDiskGB": 127,
       "RoleExtensions": {
