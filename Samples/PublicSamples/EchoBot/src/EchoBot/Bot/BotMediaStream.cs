@@ -224,6 +224,9 @@ namespace EchoBot.Bot
 
                         var currentTick = DateTime.Now.Ticks;
                         this.audioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(buffer, currentTick, _logger);
+                        _logger.LogInformation($"🧠 [OnAudioMediaReceived] Running on machine: {Environment.MachineName}");
+                        _logger.LogInformation("🟡 [OnAudioMediaReceived] Buffer ready. Waiting 10 seconds before echo...");
+                        await Task.Delay(10000);
                         await this.audioVideoFramePlayer.EnqueueBuffersAsync(this.audioMediaBuffers, new List<VideoMediaBuffer>());
                     }
                 }
