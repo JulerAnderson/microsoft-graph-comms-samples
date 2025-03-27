@@ -178,7 +178,7 @@ namespace EchoBot.Media
                 _recognizer.SessionStarted += async (s, e) =>
                 {
                     _logger.LogInformation("\nSession started event.");
-                    await TextToSpeech("Hello");
+                    await TextToSpeech("Hola, cómo estás");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
