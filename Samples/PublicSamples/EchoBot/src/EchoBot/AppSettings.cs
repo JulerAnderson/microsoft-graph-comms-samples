@@ -76,6 +76,16 @@ namespace EchoBot
         /// </summary>
         public string BotLanguage { get; set; }
 
+        /// <summary>
+        /// Gets or sets the IBM API key
+        /// </summary>
+        public string IbmApiKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the IBM service URL
+        /// </summary>
+        public string IbmServiceUrl { get; set; }
+
         // set by dsc script
 
         /// <summary>

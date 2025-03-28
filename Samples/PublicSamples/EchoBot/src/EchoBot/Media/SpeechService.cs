@@ -29,6 +29,10 @@ namespace EchoBot.Media
         private readonly SpeechConfig _speechConfig;
         private SpeechRecognizer _recognizer;
         private readonly SpeechSynthesizer _synthesizer;
+
+        private readonly string _ibmApiKey;
+        private readonly string _ibmServiceUrl;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeechService" /> class.
         public SpeechService(AppSettings settings, ILogger logger)
@@ -41,6 +45,10 @@ namespace EchoBot.Media
 
             var audioConfig = AudioConfig.FromStreamOutput(_audioOutputStream);
             _synthesizer = new SpeechSynthesizer(_speechConfig, audioConfig);
+
+            // IBM Watson Config
+            _ibmApiKey = settings.IbmApiKey;
+            _ibmServiceUrl = settings.IbmServiceUrl;
 
         }
 
@@ -178,7 +186,7 @@ namespace EchoBot.Media
                 _recognizer.SessionStarted += async (s, e) =>
                 {
                     _logger.LogInformation("\nSession started event.");
-                    await TextToSpeech("Hola, cómo estás");
+                    await TextToSpeech("Hola, soy TGIBot");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
@@ -213,19 +221,34 @@ namespace EchoBot.Media
 
         private async Task TextToSpeech(string text)
         {
-            // convert the text to speech
-            SpeechSynthesisResult result = await _synthesizer.SpeakTextAsync(text);
-            // take the stream of the result
-            // create 20ms media buffers of the stream
-            // and send to the AudioSocket in the BotMediaStream
-            using (var stream = AudioDataStream.FromResult(result))
+            try
             {
-                var currentTick = DateTime.Now.Ticks;
-                MediaStreamEventArgs args = new MediaStreamEventArgs
+                // Configurar el cliente de IBM Watson
+                var authenticator = new IBM.Cloud.SDK.Authentication.Iam.IamAuthenticator(apikey: _ibmApiKey);
+                var textToSpeechService = new IBM.Watson.TextToSpeech.v1.TextToSpeechService(authenticator);
+                textToSpeechService.SetServiceUrl(_ibmServiceUrl);
+
+                // Configurar la solicitud con la voz "es-LA_DanielaExpressive"
+                var result = textToSpeechService.Synthesize(
+                    text: text,
+                    voice: "es-LA_DanielaExpressive",
+                    accept: "audio/wav"
+                );
+
+                // Convertir el resultado a un flujo de audio
+                using (var audioStream = result.Result)
                 {
-                    AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(stream, currentTick, _logger)
-                };
-                OnSendMediaBufferEventArgs(this, args);
+                    var currentTick = DateTime.Now.Ticks;
+                    MediaStreamEventArgs args = new MediaStreamEventArgs
+                    {
+                        AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(audioStream, currentTick, _logger)
+                    };
+                    OnSendMediaBufferEventArgs(this, args);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during IBM Watson Text-to-Speech processing.");
             }
         }
     }
