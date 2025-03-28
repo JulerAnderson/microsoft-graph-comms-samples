@@ -1,10 +1,32 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using System.IO;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.Skype.Bots.Media;
 using System.Runtime.InteropServices;
+using IBM.Cloud.SDK.Core.Authentication.Iam;
 
 namespace EchoBot.Media
 {
+
+    public class AudioConverter
+    {
+        public static AudioDataStream ConvertMemoryStreamToAudioDataStream(MemoryStream memoryStream)
+        {
+            // Crear un archivo temporal para almacenar el audio
+            string tempFilePath = Path.GetTempFileName() + ".wav";
+
+            // Escribir el contenido del MemoryStream en el archivo temporal
+            File.WriteAllBytes(tempFilePath, memoryStream.ToArray());
+
+            // Crear AudioDataStream desde el archivo temporal
+            var audioStream = AudioDataStream.FromWavFileInput(tempFilePath);
+
+            // Opcionalmente, eliminar el archivo temporal después de usarlo
+            File.Delete(tempFilePath);
+
+            return audioStream;
+        }
+    }
     /// <summary>
     /// Class SpeechService.
     /// </summary>
@@ -224,7 +246,7 @@ namespace EchoBot.Media
             try
             {
                 // Configurar el cliente de IBM Watson
-                var authenticator = new IBM.Cloud.SDK.Authentication.Iam.IamAuthenticator(apikey: _ibmApiKey);
+                var authenticator = new IBM.Cloud.SDK.Core.Authentication.Iam.IamAuthenticator(apikey: _ibmApiKey);
                 var textToSpeechService = new IBM.Watson.TextToSpeech.v1.TextToSpeechService(authenticator);
                 textToSpeechService.SetServiceUrl(_ibmServiceUrl);
 
@@ -235,13 +257,20 @@ namespace EchoBot.Media
                     accept: "audio/wav"
                 );
 
-                // Convertir el resultado a un flujo de audio
-                using (var audioStream = result.Result)
+                // Convertir el resultado a un MemoryStream
+                using (var memoryStream = new MemoryStream())
                 {
+                    result.Result.CopyTo(memoryStream);
+                    memoryStream.Position = 0; // Reiniciar la posición del flujo
+
+                    // Convertir el MemoryStream a AudioDataStream usando AudioConverter
+                    var audioDataStream = AudioConverter.ConvertMemoryStreamToAudioDataStream(memoryStream);
+
+                    // Crear los buffers de audio y enviar el evento
                     var currentTick = DateTime.Now.Ticks;
                     MediaStreamEventArgs args = new MediaStreamEventArgs
                     {
-                        AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(audioStream, currentTick, _logger)
+                        AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(audioDataStream, currentTick, _logger)
                     };
                     OnSendMediaBufferEventArgs(this, args);
                 }
