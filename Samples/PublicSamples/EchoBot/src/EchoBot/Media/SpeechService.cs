@@ -216,6 +216,7 @@ namespace EchoBot.Media
         {
             // convert the text to speech
             SpeechSynthesisResult result = await _synthesizer.SpeakTextAsync(text);
+            _logger.LogInformation("USUARIO DIJO ALGO");
             // take the stream of the result
             // create 20ms media buffers of the stream
             // and send to the AudioSocket in the BotMediaStream
