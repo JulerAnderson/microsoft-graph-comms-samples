@@ -193,7 +193,8 @@ namespace EchoBot.Media
                 _recognizer.SessionStarted += async (s, e) =>
                 {
                     _logger.LogInformation("\nSession started event.");
-                    await TextToSpeech("Buenas tardes, soy TGI");
+                    _logger.LogInformation("INICIANDO RECONOCIMIENTO");
+                    await SpeakRawTextAsync("Buenas tardes, soy TGI");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
@@ -225,6 +226,31 @@ namespace EchoBot.Media
 
             _isDraining = false;
         }
+
+        private async Task SpeakRawTextAsync(string text)
+        {
+            try
+            {
+                _logger.LogInformation("Speaking raw text directly: {Text}", text);
+
+                SpeechSynthesisResult result = await _synthesizer.SpeakTextAsync(text);
+
+                using (var stream = AudioDataStream.FromResult(result))
+                {
+                    var currentTick = DateTime.Now.Ticks;
+                    MediaStreamEventArgs args = new MediaStreamEventArgs
+                    {
+                        AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(stream, currentTick, _logger)
+                    };
+                    OnSendMediaBufferEventArgs(this, args);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in SpeakRawTextAsync");
+            }
+        }
+
 
         private async Task<string> CreateWatsonSessionAsync()
         {
