@@ -201,12 +201,13 @@ namespace EchoBot.Bot
         private async void OnAudioMediaReceived(object? sender, AudioMediaReceivedEventArgs e)
         {
             _logger.LogInformation($"Received Audio: [AudioMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
-            string senderJson;
-            try
-            {
-                senderJson = sender != null
-                    ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
-                    : "null";
+            // await _languageService.SpeakRawTextAsync("Audio recibido");
+            // string senderJson;
+            // try
+            // {
+            //     senderJson = sender != null
+            //         ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
+            //         : "null";
 
             }
             catch (Exception ex)
@@ -216,11 +217,11 @@ namespace EchoBot.Bot
                 _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
             }
 
-            _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
-                senderJson,
-                e.Buffer.Data.ToString(),
-                e.Buffer.Length,
-                e.Buffer.Timestamp);
+            // _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
+            //     senderJson,
+            //     e.Buffer.Data.ToString(),
+            //     e.Buffer.Length,
+            //     e.Buffer.Timestamp);
 
             try
             {
