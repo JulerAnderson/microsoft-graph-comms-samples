@@ -207,6 +207,7 @@ namespace EchoBot.Bot
                 senderJson = sender != null
                     ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
                     : "null";
+
             }
             catch (Exception ex)
             {
@@ -214,6 +215,12 @@ namespace EchoBot.Bot
                 senderJson = sender?.ToString() ?? "null";
                 _logger.LogWarning(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
             }
+
+            _logger.LogTrace("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
+                senderJson,
+                e.Buffer.Data.ToString(),
+                e.Buffer.Length,
+                e.Buffer.Timestamp);
 
             try
             {
