@@ -201,7 +201,7 @@ namespace EchoBot.Media
                 {
                     _logger.LogInformation("\nSession stopped event.");
                     _logger.LogInformation("\nStop recognition.");
-                    _logger.LogInformation("\nSE HA DETENIDO EL RECONOCIMIENTO O SE SALIÓ EL BOT?");");
+                    _logger.LogInformation("\nSE HA DETENIDO EL RECONOCIMIENTO O SE SALIÓ EL BOT?");
                     stopRecognition.TrySetResult(0);
                 };
 
