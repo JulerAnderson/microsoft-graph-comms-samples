@@ -194,7 +194,7 @@ namespace EchoBot.Media
                 {
                     _logger.LogInformation("\nSession started event.");
                     _logger.LogInformation("INICIANDO RECONOCIMIENTO");
-                    await SpeakRawTextAsync("Buenas tardes, soy TGI");
+                    await SpeakRawTextAsync("Buenas tardes, soy TGI, ¿en qué puedo ayudarle hoy?");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
