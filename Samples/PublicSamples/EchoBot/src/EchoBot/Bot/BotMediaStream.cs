@@ -231,13 +231,8 @@ namespace EchoBot.Bot
                 {
                     // send audio buffer to language service for processing
                     // the particpant talking will hear the bot repeat what they said
-                    var length = e.Buffer.Length;
-                    if (length > 0){
-                        await _languageService.AppendAudioBuffer(e.Buffer);
-                        e.Buffer.Dispose();
-
-                        
-                    }
+                    await _languageService.AppendAudioBuffer(e.Buffer);
+                    e.Buffer.Dispose();
                 }
                 else
                 {
