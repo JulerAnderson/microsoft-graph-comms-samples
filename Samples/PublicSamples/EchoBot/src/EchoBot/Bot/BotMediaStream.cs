@@ -209,13 +209,13 @@ namespace EchoBot.Bot
             //         ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
             //         : "null";
 
-            }
-            catch (Exception ex)
-            {
-                // En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
-                senderJson = sender?.ToString() ?? "null";
-                _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //          En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
+            //     senderJson = sender?.ToString() ?? "null";
+            //     _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
+            // }
 
             // _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
             //     senderJson,
