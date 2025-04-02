@@ -201,7 +201,7 @@ namespace EchoBot.Bot
         private async void OnAudioMediaReceived(object? sender, AudioMediaReceivedEventArgs e)
         {
             _logger.LogInformation($"Received Audio: [AudioMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
-            await SpeakRawTextAsync("Audio recibido");
+            await _languageService.SpeakRawTextAsync("Audio recibido");
             string senderJson;
             try
             {
