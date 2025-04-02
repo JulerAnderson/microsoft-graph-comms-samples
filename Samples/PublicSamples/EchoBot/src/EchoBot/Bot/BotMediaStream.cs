@@ -201,7 +201,7 @@ namespace EchoBot.Bot
         private async void OnAudioMediaReceived(object? sender, AudioMediaReceivedEventArgs e)
         {
             _logger.LogInformation($"Received Audio: [AudioMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
-            await _languageService.SpeakRawTextAsync("Audio recibido");
+            // await _languageService.SpeakRawTextAsync("Audio recibido");
             // string senderJson;
             // try
             // {
@@ -233,20 +233,10 @@ namespace EchoBot.Bot
                     // the particpant talking will hear the bot repeat what they said
                     var length = e.Buffer.Length;
                     if (length > 0){
-                        // await _languageService.AppendAudioBuffer(e.Buffer);
-                        // e.Buffer.Dispose();
+                        await _languageService.AppendAudioBuffer(e.Buffer);
+                        e.Buffer.Dispose();
 
-                        //TEST
-
-                        var buffer = new byte[length];
-                        Marshal.Copy(e.Buffer.Data, buffer, 0, (int)length);
-
-                        var currentTick = DateTime.Now.Ticks;
-                        this.audioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(buffer, currentTick, _logger);
-                        _logger.LogInformation($"🧠 [OnAudioMediaReceived] Running on machine: {Environment.MachineName}");
-                        _logger.LogInformation("🟡 [OnAudioMediaReceived] Buffer ready. Waiting 10 seconds before echo...");
-                        await Task.Delay(10000);
-                        await this.audioVideoFramePlayer.EnqueueBuffersAsync(this.audioMediaBuffers, new List<VideoMediaBuffer>());
+                        
                     }
                 }
                 else
