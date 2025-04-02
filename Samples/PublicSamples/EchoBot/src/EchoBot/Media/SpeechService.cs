@@ -332,7 +332,7 @@ namespace EchoBot.Media
                         }
                     }
 
-                    var finalResponse = concatenatedResponse.ToString().Trim();
+                    var finalResponse = concatenatedResponse.ToString().Trim().Replace("<close></close>","");
                     if (!string.IsNullOrEmpty(finalResponse))
                     {
                         _logger.LogInformation($"[WATSONXAI] El Speech debería decir: {finalResponse}"); 
