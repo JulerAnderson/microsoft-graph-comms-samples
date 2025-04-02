@@ -335,8 +335,8 @@ namespace EchoBot.Media
                     var finalResponse = concatenatedResponse.ToString().Trim();
                     if (!string.IsNullOrEmpty(finalResponse))
                     {
-                        return finalResponse;
                         _logger.LogInformation($"[WATSONXAI] El Speech debería decir: {finalResponse}"); 
+                        return finalResponse;
                     }
                 }
 
