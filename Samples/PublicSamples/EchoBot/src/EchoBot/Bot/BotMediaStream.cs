@@ -202,26 +202,26 @@ namespace EchoBot.Bot
         {
             _logger.LogInformation($"Received Audio: [AudioMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
             await _languageService.SpeakRawTextAsync("Audio recibido");
-            string senderJson;
-            try
-            {
-                senderJson = sender != null
-                    ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
-                    : "null";
+            // string senderJson;
+            // try
+            // {
+            //     senderJson = sender != null
+            //         ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
+            //         : "null";
 
-            }
-            catch (Exception ex)
-            {
-                // En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
-                senderJson = sender?.ToString() ?? "null";
-                _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //     // En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
+            //     senderJson = sender?.ToString() ?? "null";
+            //     _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
+            // }
 
-            _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
-                senderJson,
-                e.Buffer.Data.ToString(),
-                e.Buffer.Length,
-                e.Buffer.Timestamp);
+            // _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
+            //     senderJson,
+            //     e.Buffer.Data.ToString(),
+            //     e.Buffer.Length,
+            //     e.Buffer.Timestamp);
 
             try
             {
@@ -233,8 +233,8 @@ namespace EchoBot.Bot
                     // the particpant talking will hear the bot repeat what they said
                     var length = e.Buffer.Length;
                     if (length > 0){
-                        await _languageService.AppendAudioBuffer(e.Buffer);
-                        e.Buffer.Dispose();
+                        // await _languageService.AppendAudioBuffer(e.Buffer);
+                        // e.Buffer.Dispose();
 
                         //TEST
 
