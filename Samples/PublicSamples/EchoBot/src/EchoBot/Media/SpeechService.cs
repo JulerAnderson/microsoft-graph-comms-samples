@@ -193,7 +193,7 @@ namespace EchoBot.Media
                 _recognizer.SessionStarted += async (s, e) =>
                 {
                     _logger.LogInformation("\nSession started event.");
-                    _logger.LogInformation("INICIANDO RECONOCIMIENTO");
+                    _logger.LogInformation($"[WATSON] Creo que aquí es cuando invocas al bot")
                     // await SpeakRawTextAsync("Buenas tardes, soy TGI, ¿en qué puedo ayudarle hoy?");
                 };
 
@@ -201,7 +201,7 @@ namespace EchoBot.Media
                 {
                     _logger.LogInformation("\nSession stopped event.");
                     _logger.LogInformation("\nStop recognition.");
-                    _logger.LogInformation("\nSE HA DETENIDO EL RECONOCIMIENTO O SE SALIÓ EL BOT?");
+                    _logger.LogInformation($"[WATSON] Creo que aquí es cuando botas al bot");
                     stopRecognition.TrySetResult(0);
                 };
 
@@ -267,7 +267,7 @@ namespace EchoBot.Media
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var jsonResponse = JsonSerializer.Deserialize<WatsonSessionResponse>(responseContent);
 
-                _logger.LogInformation($"SESIÓN DE WATSON CREADA: {jsonResponse.SessionId}");
+                _logger.LogInformation($"[WATSON] Nueva sesión creada: {jsonResponse.SessionId}");
                 return jsonResponse.SessionId;
             }
             catch (Exception ex)
@@ -302,12 +302,13 @@ namespace EchoBot.Media
                     Content = new StringContent(JsonSerializer.Serialize(requestContent), Encoding.UTF8, "application/json")
                 };
                 request.Headers.Add("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"apikey:{WatsonApiKey}"))}");
-
+                _logger.LogInformation($"[WATSON] Se envía a Watson: {requestContent}");
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 _logger?.LogInformation("Watson Assistant raw response: {ResponseContent}", responseContent);
+                _logger.LogInformation($"[WATSON] Watson responde: {responseContent}");
 
                 // Deserializar la respuesta como un objeto dinámico para inspeccionar la estructura
                 var jsonResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
