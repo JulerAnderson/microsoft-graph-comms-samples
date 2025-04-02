@@ -213,7 +213,7 @@ namespace EchoBot.Bot
             {
                 // En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
                 senderJson = sender?.ToString() ?? "null";
-                _logger.LogWarning(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
+                _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
             }
 
             _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",
@@ -230,8 +230,23 @@ namespace EchoBot.Bot
                 {
                     // send audio buffer to language service for processing
                     // the particpant talking will hear the bot repeat what they said
-                    await _languageService.AppendAudioBuffer(e.Buffer);
-                    e.Buffer.Dispose();
+                    var length = e.Buffer.Length;
+                    if (length > 0){
+                        await _languageService.AppendAudioBuffer(e.Buffer);
+                        e.Buffer.Dispose();
+
+                        //TEST
+
+                        var buffer = new byte[length];
+                        Marshal.Copy(e.Buffer.Data, buffer, 0, (int)length);
+
+                        var currentTick = DateTime.Now.Ticks;
+                        this.audioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(buffer, currentTick, _logger);
+                        _logger.LogInformation($"🧠 [OnAudioMediaReceived] Running on machine: {Environment.MachineName}");
+                        _logger.LogInformation("🟡 [OnAudioMediaReceived] Buffer ready. Waiting 10 seconds before echo...");
+                        await Task.Delay(10000);
+                        await this.audioVideoFramePlayer.EnqueueBuffersAsync(this.audioMediaBuffers, new List<VideoMediaBuffer>());
+                    }
                 }
                 else
                 {

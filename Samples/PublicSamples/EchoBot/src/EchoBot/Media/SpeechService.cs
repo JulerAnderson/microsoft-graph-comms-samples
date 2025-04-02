@@ -194,7 +194,6 @@ namespace EchoBot.Media
                 {
                     _logger.LogInformation("INGRESA EL BOT AL TEAMS");
                     await SpeakRawTextAsync("Hola, soy TGI, en qué puedo ayudarte el día de hoy?");
-                    await SpeakRawTextAsync("USUARIO01A123*");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
