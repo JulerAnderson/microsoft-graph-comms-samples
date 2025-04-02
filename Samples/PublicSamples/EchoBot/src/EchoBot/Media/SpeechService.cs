@@ -226,7 +226,7 @@ namespace EchoBot.Media
             _isDraining = false;
         }
 
-        private async Task SpeakRawTextAsync(string text)
+        public async Task SpeakRawTextAsync(string text)
         {
             try
             {
