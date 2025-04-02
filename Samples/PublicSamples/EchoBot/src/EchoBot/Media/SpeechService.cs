@@ -193,14 +193,16 @@ namespace EchoBot.Media
 
                 _recognizer.SessionStarted += async (s, e) =>
                 {
-                    _logger.LogInformation("INGRESA EL BOT AL TEAMS");
-                    await SpeakRawTextAsync("Hola, soy TGI, en qué puedo ayudarte el día de hoy?");
+                    _logger.LogInformation("\nSession started event.");
+                    _logger.LogInformation($"[WATSONXAI] Creo que aquí es cuando invocas al bot");
+                    // await SpeakRawTextAsync("Buenas tardes, soy TGI, ¿en qué puedo ayudarle hoy?");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
                 {
                     _logger.LogInformation("\nSession stopped event.");
                     _logger.LogInformation("\nStop recognition.");
+                    _logger.LogInformation($"[WATSONXAI] Creo que aquí es cuando botas al bot");
                     stopRecognition.TrySetResult(0);
                 };
 
@@ -227,29 +229,29 @@ namespace EchoBot.Media
             _isDraining = false;
         }
 
-        public async Task SpeakRawTextAsync(string text)
-        {
-            try
-            {
-                _logger.LogInformation("Speaking raw text directly: {Text}", text);
+        // private async Task SpeakRawTextAsync(string text)
+        // {
+        //     try
+        //     {
+        //         _logger.LogInformation("Speaking raw text directly: {Text}", text);
 
-                SpeechSynthesisResult result = await _synthesizer.SpeakTextAsync(text);
+        //         SpeechSynthesisResult result = await _synthesizer.SpeakTextAsync(text);
 
-                using (var stream = AudioDataStream.FromResult(result))
-                {
-                    var currentTick = DateTime.Now.Ticks;
-                    MediaStreamEventArgs args = new MediaStreamEventArgs
-                    {
-                        AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(stream, currentTick, _logger)
-                    };
-                    OnSendMediaBufferEventArgs(this, args);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in SpeakRawTextAsync");
-            }
-        }
+        //         using (var stream = AudioDataStream.FromResult(result))
+        //         {
+        //             var currentTick = DateTime.Now.Ticks;
+        //             MediaStreamEventArgs args = new MediaStreamEventArgs
+        //             {
+        //                 AudioMediaBuffers = Util.Utilities.CreateAudioMediaBuffers(stream, currentTick, _logger)
+        //             };
+        //             OnSendMediaBufferEventArgs(this, args);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error in SpeakRawTextAsync");
+        //     }
+        // }
 
 
         private async Task<string> CreateWatsonSessionAsync()
@@ -266,7 +268,7 @@ namespace EchoBot.Media
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var jsonResponse = JsonSerializer.Deserialize<WatsonSessionResponse>(responseContent);
 
-                _logger.LogInformation("Watson session created successfully.");
+                _logger.LogInformation($"[WATSONXAI] Nueva sesión creada: {jsonResponse.SessionId}");
                 return jsonResponse.SessionId;
             }
             catch (Exception ex)
@@ -301,12 +303,13 @@ namespace EchoBot.Media
                     Content = new StringContent(JsonSerializer.Serialize(requestContent), Encoding.UTF8, "application/json")
                 };
                 request.Headers.Add("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"apikey:{WatsonApiKey}"))}");
-
+                _logger.LogInformation($"[WATSONXAI] Se envía a Watson: {requestContent}");
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 _logger?.LogInformation("Watson Assistant raw response: {ResponseContent}", responseContent);
+                _logger.LogInformation($"[WATSONXAI] Watson responde: {responseContent}");
 
                 // Deserializar la respuesta como un objeto dinámico para inspeccionar la estructura
                 var jsonResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
@@ -342,6 +345,14 @@ namespace EchoBot.Media
             try
             {
                 _logger.LogInformation("Processing text with Watson Assistant...");
+
+                // Eliminar el punto final si existe
+                if (text.EndsWith("."))
+                {
+                    text = text.TrimEnd('.');
+                    _logger.LogInformation($"SE ENVÍA A WATSON SIN PUNTO: {text}");
+                }
+
                 var watsonResponse = await SendMessageToWatsonAsync(text);
 
                 if (!string.IsNullOrEmpty(watsonResponse))
