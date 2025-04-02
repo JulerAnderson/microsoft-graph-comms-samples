@@ -318,14 +318,25 @@ namespace EchoBot.Media
                     output.TryGetProperty("generic", out var generic) &&
                     generic.ValueKind == JsonValueKind.Array)
                 {
+                    var concatenatedResponse = new StringBuilder();
+
                     foreach (var item in generic.EnumerateArray())
                     {
                         if (item.TryGetProperty("response_type", out var responseType) &&
                             responseType.GetString() == "text" &&
                             item.TryGetProperty("text", out var text))
                         {
-                            return text.GetString();
+                            // Agregar el texto con un punto y un espacio al final
+                            concatenatedResponse.Append(text.GetString());
+                            concatenatedResponse.Append(". ");
                         }
+                    }
+
+                    var finalResponse = concatenatedResponse.ToString().Trim();
+                    if (!string.IsNullOrEmpty(finalResponse))
+                    {
+                        return finalResponse;
+                        _logger.LogInformation($"[WATSONXAI] El Speech debería decir: {finalResponse}"); 
                     }
                 }
 
