@@ -213,7 +213,7 @@ namespace EchoBot.Bot
             {
                 // En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
                 senderJson = sender?.ToString() ?? "null";
-                _logger.LogWarning(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
+                _logger.LogInformation(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
             }
 
             _logger.LogInformation("Received Audio Details: {SenderJson} with data: {Data}, Length: {Length}, Timestamp: {Timestamp}",

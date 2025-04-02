@@ -65,6 +65,7 @@ namespace EchoBot.Media
         /// <param name="audioBuffer"></param>
         public async Task AppendAudioBuffer(AudioMediaBuffer audioBuffer)
         {
+            _logger.LogInformation("AppendAudioBuffer called");
             if (!_isRunning)
             {
                 Start();
@@ -194,7 +195,6 @@ namespace EchoBot.Media
                 {
                     _logger.LogInformation("INGRESA EL BOT AL TEAMS");
                     await SpeakRawTextAsync("Hola, soy TGI, en qué puedo ayudarte el día de hoy?");
-                    await SpeakRawTextAsync("USUARIO01A123*");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>
@@ -227,7 +227,7 @@ namespace EchoBot.Media
             _isDraining = false;
         }
 
-        private async Task SpeakRawTextAsync(string text)
+        public async Task SpeakRawTextAsync(string text)
         {
             try
             {
