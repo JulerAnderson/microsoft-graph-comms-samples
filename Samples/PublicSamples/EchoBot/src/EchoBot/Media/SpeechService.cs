@@ -65,6 +65,7 @@ namespace EchoBot.Media
         /// <param name="audioBuffer"></param>
         public async Task AppendAudioBuffer(AudioMediaBuffer audioBuffer)
         {
+            _logger.LogInformation("AppendAudioBuffer called");
             if (!_isRunning)
             {
                 Start();
