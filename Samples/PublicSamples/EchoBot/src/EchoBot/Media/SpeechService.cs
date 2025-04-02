@@ -201,6 +201,7 @@ namespace EchoBot.Media
                 {
                     _logger.LogInformation("\nSession stopped event.");
                     _logger.LogInformation("\nStop recognition.");
+                    _logger.LogInformation("\nSE HA DETENIDO EL RECONOCIMIENTO O SE SALIÓ EL BOT?");");
                     stopRecognition.TrySetResult(0);
                 };
 
@@ -266,7 +267,7 @@ namespace EchoBot.Media
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var jsonResponse = JsonSerializer.Deserialize<WatsonSessionResponse>(responseContent);
 
-                _logger.LogInformation("Watson session created successfully.");
+                _logger.LogInformation($"SESIÓN DE WATSON CREADA: {jsonResponse.SessionId}");
                 return jsonResponse.SessionId;
             }
             catch (Exception ex)
@@ -342,6 +343,14 @@ namespace EchoBot.Media
             try
             {
                 _logger.LogInformation("Processing text with Watson Assistant...");
+
+                // Eliminar el punto final si existe
+                if (text.EndsWith("."))
+                {
+                    text = text.TrimEnd('.');
+                    _logger.LogInformation($"SE ENVÍA A WATSON SIN PUNTO: {text}");
+                }
+
                 var watsonResponse = await SendMessageToWatsonAsync(text);
 
                 if (!string.IsNullOrEmpty(watsonResponse))
