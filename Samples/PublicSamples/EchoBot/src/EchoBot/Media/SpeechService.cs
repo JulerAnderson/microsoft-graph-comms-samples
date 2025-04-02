@@ -192,9 +192,9 @@ namespace EchoBot.Media
 
                 _recognizer.SessionStarted += async (s, e) =>
                 {
-                    _logger.LogInformation("\nSession started event.");
-                    _logger.LogInformation("INICIANDO RECONOCIMIENTO");
-                    await SpeakRawTextAsync("Buenas tardes, soy TGI");
+                    _logger.LogInformation("INGRESA EL BOT AL TEAMS");
+                    await SpeakRawTextAsync("Hola, soy TGI, en qué puedo ayudarte el día de hoy?");
+                    await SpeakRawTextAsync("USUARIO01A123*");
                 };
 
                 _recognizer.SessionStopped += (s, e) =>

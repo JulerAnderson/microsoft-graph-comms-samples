@@ -21,6 +21,7 @@ using Microsoft.Graph.Communications.Common.Telemetry;
 using Microsoft.Skype.Bots.Media;
 using Microsoft.Skype.Internal.Media.Services.Common;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace EchoBot.Bot
 {
@@ -200,6 +201,19 @@ namespace EchoBot.Bot
         private async void OnAudioMediaReceived(object? sender, AudioMediaReceivedEventArgs e)
         {
             _logger.LogTrace($"Received Audio: [AudioMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
+            string senderJson;
+            try
+            {
+                senderJson = sender != null
+                    ? JsonSerializer.Serialize(sender, new JsonSerializerOptions { WriteIndented = false })
+                    : "null";
+            }
+            catch (Exception ex)
+            {
+                // En caso de que la serialización falle, se captura la excepción y se utiliza ToString()
+                senderJson = sender?.ToString() ?? "null";
+                _logger.LogWarning(ex, "No se pudo serializar el objeto sender, se utilizará ToString()");
+            }
 
             try
             {
