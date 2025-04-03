@@ -367,7 +367,7 @@ namespace EchoBot.Media
                 {
                     _isProcessingResponse = true;
                     await _recognizer.StopContinuousRecognitionAsync();
-                    _logger.LogInformation("Recognition paused while processing response.");
+                    _logger.LogInformation("[WATSOXAI] PAUSANDO LA RECEPCIÓN Y TRANSCRIPCIÓN DE AUDIO");
                 }
 
                 // Eliminar el punto final si existe
@@ -381,7 +381,7 @@ namespace EchoBot.Media
 
                 if (!string.IsNullOrEmpty(watsonResponse))
                 {
-                    _logger.LogInformation("Converting Watson response to speech...");
+                    _logger.LogInformation("[WATSONXAI] CONVERTIENDO TEXTO A VOZ");
                     SpeechSynthesisResult result = await _synthesizer.SpeakTextAsync(watsonResponse);
 
                     using (var stream = AudioDataStream.FromResult(result))
@@ -410,7 +410,7 @@ namespace EchoBot.Media
                 {
                     await _recognizer.StartContinuousRecognitionAsync();
                     _isProcessingResponse = false;
-                    _logger.LogInformation("Recognition resumed after processing response.");
+                    _logger.LogInformation("[WATSONXAI] REANUDANDO LA RECEPCIÓN Y TRANSCRIPCIÓN DE AUDIO");
                 }
             }
         }
