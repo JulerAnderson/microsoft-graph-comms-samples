@@ -363,6 +363,8 @@ namespace EchoBot.Media
                 _logger.LogInformation("Processing text with Watson Assistant...");
 
                 // Pausar la recepción y transcripción de audio
+                _logger.LogInformation($"[WATSOXAI] Recognizer: {_recognizer}");
+                _logger.LogInformation($"[WATSOXAI] _isProcessingResponse: {_isProcessingResponse}");
                 if (_recognizer != null && !_isProcessingResponse)
                 {
                     _isProcessingResponse = true;
