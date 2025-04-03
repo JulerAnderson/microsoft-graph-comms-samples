@@ -43,6 +43,9 @@ namespace EchoBot.Media
         private string _watsonSessionId;
         private readonly HttpClient _httpClient;
 
+        // Agregar un indicador de estado
+        private bool _isProcessingResponse = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeechService" /> class.
         public SpeechService(AppSettings settings, ILogger logger)
@@ -50,16 +53,8 @@ namespace EchoBot.Media
             _logger = logger;
 
             _speechConfig = SpeechConfig.FromSubscription(settings.SpeechConfigKey, settings.SpeechConfigRegion);
-            //_speechConfig.SpeechSynthesisLanguage = settings.BotLanguage;
+            _speechConfig.SpeechSynthesisLanguage = settings.BotLanguage;
             _speechConfig.SpeechRecognitionLanguage = settings.BotLanguage;
-            // Configurar SpeechConfig con tu clave y región de Azure Speech Service
-            //_speechConfig = SpeechConfig.FromSubscription("72cf12da-ab8b-4699-ab8f-b4dc1ef57e5a", "southcentralus");
-            // Configurar la voz a es-CO-SalomeNeural
-            _speechConfig.SpeechSynthesisVoiceName = "es-CO-GonzaloNeural";
-            // Configurar el idioma de síntesis (opcional, pero recomendado)
-            _speechConfig.SpeechSynthesisLanguage = "es-CO";
-            // Otras configuraciones opcionales
-            _logger.LogInformation("SpeechConfig initialized with voice es-CO-SalomeNeural.");
 
             var audioConfig = AudioConfig.FromStreamOutput(_audioOutputStream);
             _synthesizer = new SpeechSynthesizer(_speechConfig, audioConfig);
@@ -367,6 +362,14 @@ namespace EchoBot.Media
             {
                 _logger.LogInformation("Processing text with Watson Assistant...");
 
+                // Pausar la recepción y transcripción de audio
+                if (_recognizer != null && !_isProcessingResponse)
+                {
+                    _isProcessingResponse = true;
+                    await _recognizer.StopContinuousRecognitionAsync();
+                    _logger.LogInformation("Recognition paused while processing response.");
+                }
+
                 // Eliminar el punto final si existe
                 if (text.EndsWith("."))
                 {
@@ -399,6 +402,16 @@ namespace EchoBot.Media
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during TextToSpeech processing.");
+            }
+            finally
+            {
+                // Reanudar la recepción y transcripción de audio
+                if (_recognizer != null && _isProcessingResponse)
+                {
+                    await _recognizer.StartContinuousRecognitionAsync();
+                    _isProcessingResponse = false;
+                    _logger.LogInformation("Recognition resumed after processing response.");
+                }
             }
         }
 
