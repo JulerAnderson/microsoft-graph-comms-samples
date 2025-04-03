@@ -193,7 +193,8 @@ namespace EchoBot.Media
 
                 _recognizer.SessionStarted += async (s, e) =>
                 {
-                    TextToSpeech(SendMessageToWatsonAsync("Hola"));
+                    string saludo = await SendMessageToWatsonAsync("Hola");
+                    await TextToSpeech(saludo);
                     _logger.LogInformation("\nSession started event.");
                     _logger.LogInformation($"[WATSONXAI] Creo que aquí es cuando invocas al bot");
                     // await SpeakRawTextAsync("Buenas tardes, soy TGI, ¿en qué puedo ayudarle hoy?");
