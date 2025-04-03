@@ -55,7 +55,7 @@ namespace EchoBot.Media
             // Configurar SpeechConfig con tu clave y región de Azure Speech Service
             //_speechConfig = SpeechConfig.FromSubscription("72cf12da-ab8b-4699-ab8f-b4dc1ef57e5a", "southcentralus");
             // Configurar la voz a es-CO-SalomeNeural
-            _speechConfig.SpeechSynthesisVoiceName = "es-CO-SalomeNeural";
+            _speechConfig.SpeechSynthesisVoiceName = "es-CO-GonzaloNeural";
             // Configurar el idioma de síntesis (opcional, pero recomendado)
             _speechConfig.SpeechSynthesisLanguage = "es-CO";
             // Otras configuraciones opcionales
