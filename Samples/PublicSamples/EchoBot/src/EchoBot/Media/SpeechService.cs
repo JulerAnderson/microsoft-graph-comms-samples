@@ -46,6 +46,11 @@ namespace EchoBot.Media
         // Agregar un indicador de estado
         private bool _isProcessingResponse = false;
 
+        public bool IsProcessingResponse
+        {
+            get => _isProcessingResponse;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeechService" /> class.
         public SpeechService(AppSettings settings, ILogger logger)

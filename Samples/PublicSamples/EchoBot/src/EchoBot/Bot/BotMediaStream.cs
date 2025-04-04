@@ -229,15 +229,20 @@ namespace EchoBot.Bot
 
                 if (_languageService != null)
                 {
-                    // send audio buffer to language service for processing
-                    // the particpant talking will hear the bot repeat what they said
+                    // Verificar si SpeechService está procesando una respuesta
+                    if (_languageService.IsProcessingResponse)
+                    {
+                        _logger.LogInformation("Ignoring audio input because a response is being processed.");
+                        return;
+                    }
+
+                    // Enviar el buffer de audio al servicio de lenguaje
                     await _languageService.AppendAudioBuffer(e.Buffer);
                     e.Buffer.Dispose();
                 }
                 else
                 {
-                    // send audio buffer back on the audio socket
-                    // the particpant talking will hear themselves
+                    // Enviar el buffer de audio de vuelta al socket de audio
                     var length = e.Buffer.Length;
                     if (length > 0)
                     {
