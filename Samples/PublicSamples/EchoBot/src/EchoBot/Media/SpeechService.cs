@@ -159,11 +159,21 @@ namespace EchoBot.Media
 
                 _recognizer.Recognizing += (s, e) =>
                 {
+                    if (_isProcessingResponse)
+                    {
+                        _logger.LogInformation("Ignoring input because a response is being processed.");
+                        return;
+                    }
                     _logger.LogInformation($"RECOGNIZING: Text={e.Result.Text}");
                 };
 
                 _recognizer.Recognized += async (s, e) =>
                 {
+                    if (_isProcessingResponse)
+                    {
+                        _logger.LogInformation("Ignoring recognized input because a response is being processed.");
+                        return;
+                    }
                     if (e.Result.Reason == ResultReason.RecognizedSpeech)
                     {
                         if (string.IsNullOrEmpty(e.Result.Text))
@@ -366,8 +376,8 @@ namespace EchoBot.Media
                 if (_recognizer != null && !_isProcessingResponse)
                 {
                     _isProcessingResponse = true;
-                    await _recognizer.StopContinuousRecognitionAsync();
-                    _logger.LogInformation("[WATSONXAI] PAUSANDO LA RECEPCIÓN Y TRANSCRIPCIÓN DE AUDIO");
+                    //await _recognizer.StopContinuousRecognitionAsync();
+                    _logger.LogInformation("[WATSONXAI] Recognition paused while processing response.");
                 }
 
                 // Eliminar el punto final si existe
@@ -408,9 +418,9 @@ namespace EchoBot.Media
                 // Reanudar la recepción y transcripción de audio
                 if (_recognizer != null && _isProcessingResponse)
                 {
-                    await _recognizer.StartContinuousRecognitionAsync();
+                    //await _recognizer.StartContinuousRecognitionAsync();
                     _isProcessingResponse = false;
-                    _logger.LogInformation("[WATSONXAI] REANUDANDO LA RECEPCIÓN Y TRANSCRIPCIÓN DE AUDIO");
+                    _logger.LogInformation("[WATSONXAI] Recognition resumed after processing response.");
                 }
             }
         }
