@@ -58,8 +58,16 @@ namespace EchoBot.Media
             _logger = logger;
 
             _speechConfig = SpeechConfig.FromSubscription(settings.SpeechConfigKey, settings.SpeechConfigRegion);
-            _speechConfig.SpeechSynthesisLanguage = settings.BotLanguage;
+            //_speechConfig.SpeechSynthesisLanguage = settings.BotLanguage;
             _speechConfig.SpeechRecognitionLanguage = settings.BotLanguage;
+            // Configurar SpeechConfig con tu clave y región de Azure Speech Service
+            //_speechConfig = SpeechConfig.FromSubscription("72cf12da-ab8b-4699-ab8f-b4dc1ef57e5a", "southcentralus");
+            // Configurar la voz a es-CO-SalomeNeural
+            _speechConfig.SpeechSynthesisVoiceName = "es-MX-DaliaNeural";
+            // Configurar el idioma de síntesis (opcional, pero recomendado)
+            _speechConfig.SpeechSynthesisLanguage = "es-MX";
+            // Otras configuraciones opcionales
+            _logger.LogInformation("SpeechConfig initialized with voice es-CO-SalomeNeural.");
 
             var audioConfig = AudioConfig.FromStreamOutput(_audioOutputStream);
             _synthesizer = new SpeechSynthesizer(_speechConfig, audioConfig);
